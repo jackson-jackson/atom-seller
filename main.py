@@ -52,7 +52,7 @@ def sell_token(token):
     count = 0
     while count <= orders:
         price = get_average_price(currency_pair)
-        # polo.buy(currency_pair, price, min_order_btc)
+        polo.buy(currency_pair, price, min_order_btc) # DANGER DANGER DANGER
         print(f"Order {count} of {orders}")
         count += 1
         print(f"Sleeping for {time.sleep(sell_interval)}")
