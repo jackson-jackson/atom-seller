@@ -2,7 +2,6 @@ import poloniex
 import private
 import math
 import time
-import json
 
 polo = poloniex.Poloniex(private.API_KEY,private.API_SECRET)
 balances = polo.returnBalances()
