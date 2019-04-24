@@ -5,10 +5,10 @@ import time
 
 polo = poloniex.Poloniex(private.API_KEY,private.API_SECRET)
 
-min_order = .15 #TODO make this based on min btc order size of .0001
+min_order = .25 #TODO make this based on min btc order size of .0001
 
 #               D   H   M   S
-time_to_sell =  0 * 0 * 5 * 60
+time_to_sell =  1 * 1 * 5 * 60
 
 token = 'ATOM'
 currency_pair = 'BTC_ATOM'
@@ -51,14 +51,14 @@ def sell_token(token):
     print(f"Number of Orders: {orders}")
     count = 0
     # Determine the sell interval, in seconds, required to sell entire balance over one week
-    sell_interval = math.floor(time_to_sell / number_of_orders(token))
-    print(f"Sell Interval: {sell_interval}")
+    sell_interval = time_to_sell / orders
+    print(f"Sell Interval: {round(sell_interval)}")
     while count < 5:
         price = get_average_price(currency_pair)
         polo.sell(currency_pair, price, min_order) # DANGER DANGER DANGER
         print(f"Order {count + 1} of {orders}")
         count += 1
-        print(f"Sleeping for {sell_interval}")
+        print(f"Sleeping for {round(sell_interval)}")
         time.sleep(sell_interval)
     print("Done")
 
