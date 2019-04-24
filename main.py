@@ -4,9 +4,8 @@ import math
 import time
 
 polo = poloniex.Poloniex(private.API_KEY,private.API_SECRET)
-balances = polo.returnBalances()
 
-min_order = .15 # TODO make this based on min btc order size of .0001
+min_order = .15 #TODO make this based on min btc order size of .0001
 one_week = 604800 #TODO use a better variable name
 
 token = 'ATOM'
@@ -15,15 +14,17 @@ currency_pair = 'BTC_ATOM'
 
 # Check token balance
 def check_balance(token):
+    balances = polo.returnBalances()
     if float(balances[token]) > 0.00001:
         return float(balances[token])
 
 
 # Determine number or orders based on the minimum order size
 def number_of_orders(token):
-    if float(check_balance(token)) > min_order:
-        number_of_orders = math.floor(check_balance(token) / min_order)
-        return number_of_orders
+    token_balance = check_balance(token)    
+    if float(token_balance) > min_order:
+        number_of_orders = math.floor(token_balance) / min_order
+        return number_of_orders #TODO Optimize by returning token balance as well
 
 
 # Get average price of currency pair
@@ -41,8 +42,8 @@ def get_average_price(currency_pair):
 
 # Sell token balance over 7 days using the minimum order size
 def sell_token(token):
-    balance = check_balance(token)
-    print(f"Balance: {balance}")
+    token_balance = check_balance(token)
+    print(f"Balance: {token_balance}")
     orders = number_of_orders(token) + 1
     print(f"Number of Orders: {orders}")
     count = 1
