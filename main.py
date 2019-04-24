@@ -6,7 +6,11 @@ import time
 polo = poloniex.Poloniex(private.API_KEY,private.API_SECRET)
 
 min_order = .15 #TODO make this based on min btc order size of .0001
-time_to_sell = 350 #TODO use a better variable name
+
+#               D   H   M   S
+time_to_sell =  0 * 0 * 5 * 60
+
+
 
 token = 'ATOM'
 currency_pair = 'BTC_ATOM'
