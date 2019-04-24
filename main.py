@@ -10,8 +10,6 @@ min_order = .15 #TODO make this based on min btc order size of .0001
 #               D   H   M   S
 time_to_sell =  0 * 0 * 5 * 60
 
-
-
 token = 'ATOM'
 currency_pair = 'BTC_ATOM'
 
@@ -30,6 +28,7 @@ def number_of_orders(token):
         number_of_orders = math.floor(token_balance / min_order)
         return number_of_orders #TODO Optimize by returning token balance as well
     return 0
+
 
 # Get average price of currency pair
 def get_average_price(currency_pair):
@@ -62,6 +61,7 @@ def sell_token(token):
         time.sleep(sell_interval)
 
         #TODO add error handling
+
 
 sell_token(token)
 
