@@ -43,7 +43,7 @@ def get_average_price(currency_pair):
     return round(sum_price / len(orderbook['bids']), 8)
 
 
-# Sell token balance over 7 days using the minimum order size
+# Sell token balance over time_to_sell using the minimum order size
 def sell_token(token):
     token_balance = check_balance(token)
     print(f"Balance: {token_balance}")
@@ -59,8 +59,10 @@ def sell_token(token):
         count += 1
         print(f"Sleeping for {sell_interval}")
         time.sleep(sell_interval)
+    print("Done")
 
         #TODO add error handling
+        #TODO add timestamping
 
 
 sell_token(token)
