@@ -52,7 +52,8 @@ def sell_token(token):
     count = 0
     # Determine the sell interval, in seconds, required to sell entire balance over one week
     sell_interval = math.floor(time_to_sell / number_of_orders(token))
-    while count < 2:
+    print(f"Sell Interval: {sell_interval}")
+    while count < 5:
         price = get_average_price(currency_pair)
         polo.sell(currency_pair, price, min_order) # DANGER DANGER DANGER
         print(f"Order {count + 1} of {orders}")
