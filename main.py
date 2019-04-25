@@ -1,4 +1,5 @@
 import settings
+import functions
 from currencies import Bitcoin, Atom
 import math
 import time
@@ -17,22 +18,37 @@ def order_velocity():
     return velocity
 
 
-# Get average price of currency pair
-def get_average_price(currency_pair):    
-    orderbook = settings.POLO.returnOrderBook(settings.CURRENCY_PAIR, depth=5)
+# # Get average market order price of currency pair
+# def get_average_price(currency_pair):    
+#     orderbook = settings.POLO.returnOrderBook(settings.CURRENCY_PAIR, depth=5)
     
-    sum_price = 0
+#     sum_price = 0
 
-    for ask in orderbook['bids']:
-       sum_price += float(ask[0])
+#     for ask in orderbook['bids']:
+#        sum_price += float(ask[0])
 
-    return round(sum_price / len(orderbook['bids']), 8)
+#     return round(sum_price / len(orderbook['bids']), 8)
 
 
+# Get price inside spread
+def price_inside_spread(currency_pair):
+        tickers = settings.POLO.returnTicker()
+        highest_bid = float(tickers[settings.CURRENCY_PAIR]['highestBid'])
+        lowest_ask = float(tickers[settings.CURRENCY_PAIR]['lowestAsk'])
+        
+        spread = lowest_ask - highest_bid
+
+        order_price = highest_bid + (spread / 2)
+
+        return round(order_price, 8)
+
+
+# Sell ATOM
 def sell():
     global num_orders, amount_sold
 
-    price = get_average_price(settings.CURRENCY_PAIR)
+    price = price_inside_spread(settings.CURRENCY_PAIR)
+    print(price)
 
     if Atom.price() > price and Atom.balance() > 0.5: # Above min price
         settings.POLO.sell(settings.CURRENCY_PAIR, price, settings.MIN_ORDER)
