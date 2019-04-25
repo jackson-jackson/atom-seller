@@ -24,8 +24,6 @@ class Bitcoin:
 
         return price
         
-    prices = []
-
 
 class Atom:
     @staticmethod
@@ -40,5 +38,3 @@ class Atom:
         price = get_last_price('BTC_ATOM')
 
         return price
-        
-    prices = []

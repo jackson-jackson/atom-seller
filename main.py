@@ -15,15 +15,10 @@ min_atom_price = 3 # Minimum atom price in USD that the script should sell at. S
 
 min_order = .25 #TODO make this based on min btc order size of .0001
 
-token = 'ATOM'
 currency_pair = 'BTC_ATOM'
 
 amount_sold = 0.0
 num_orders = 0
-btc_prices = []
-atom_prices = []
-atom_balance = 0.0
-btc_balance = 0.0
 
 
 # Work out rate for orders
@@ -36,11 +31,8 @@ def order_velocity():
 
 
 def update_balances():
-    global btc_balance, atom_balance
-
-    balances = polo.returnBalances()
-    btc_balance = float(balances['BTC'])
-    atom_balance = float(balances['ATOM'])
+    Bitcoin.balance()
+    Atom.balance()
 
 
 # Get average price of currency pair
@@ -60,7 +52,7 @@ def sell():
 
     price = get_average_price(currency_pair)
 
-    if Atom.price() > price and atom_balance > 0.5: # Above min price
+    if Atom.price() > price and Atom.balance() > 0.5: # Above min price
         polo.sell(currency_pair, price, min_order)
         num_orders += 1
         amount_sold += min_order
@@ -75,7 +67,7 @@ def cli_update():
     print(" ")
     print(f"Target of {target_volume_day} atoms per day, with minimum price of ${min_atom_price} USD, and sell interval of {round(order_velocity())} seconds.")
     print(" ")
-    print(f"Current BTC balance is {round(btc_balance, 2)} (${round(btc_balance * Bitcoin.price(), 2)}), and ATOM balance is {round(atom_balance, 2)} (${round(atom_balance * Atom.price() * Bitcoin.price(), 2)})")
+    print(f"Current BTC balance is {round(Bitcoin.balance(), 2)} (${round(Bitcoin.balance() * Bitcoin.price(), 2)}), and ATOM balance is {round(Atom.balance(), 2)} (${round(Atom.balance() * Atom.price() * Bitcoin.price(), 2)})")
     print(" ")
     print(f"Number of orders executed: {num_orders}")
     print(f"Total atoms sold: {amount_sold}")
@@ -87,12 +79,12 @@ def run_updates():
 
 
 def thread_one():
-    threading.Timer(5, thread_one).start()
+    threading.Timer(10, thread_one).start()
     run_updates()
 
 
 def thread_two():
-    time.sleep(5)
+    time.sleep(10)
     threading.Timer(order_velocity(), thread_two).start()
     sell()
 
