@@ -27,7 +27,7 @@ atom_balance = 0.0
 btc_balance = 0.0
 
 
-# Update the btc and atom prices
+# Update BTC and ATOM prices
 def update_prices():
     global btc_price, atom_price
 
@@ -85,7 +85,7 @@ def sell():
 
 def cli_update():
 
-    system('cls')
+    system('cls') # clear for linux, cls for Windows
 
     print(f"Atom Seller")
     print(f" ")
