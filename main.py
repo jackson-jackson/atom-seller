@@ -12,10 +12,7 @@ polo = poloniex.Poloniex(private.API_KEY,private.API_SECRET)
 target_volume_day = 10 # Target amount of atoms that the script should sell per day
 min_atom_price = 3 # Minimum atom price in USD that the script should sell at. Script will not sell below this
 
-
-
 min_order = .25 #TODO make this based on min btc order size of .0001
-
 
 token = 'ATOM'
 currency_pair = 'BTC_ATOM'
@@ -28,6 +25,7 @@ btc_prices = []
 atom_prices = []
 atom_balance = 0.0
 btc_balance = 0.0
+
 
 # Update the btc and atom prices
 def update_prices():
@@ -42,7 +40,7 @@ def update_prices():
     atom_price = float(btc_atom_book['bids'][0][0])
 
     atom_prices.append(btc_price * atom_price)
-   
+
 
 # Work out rate for orders
 def order_velocity():
@@ -85,9 +83,6 @@ def sell():
         amount_sold += min_order
 
 
-
-
-
 def cli_update():
 
     system('clear')
@@ -114,14 +109,12 @@ def thread_one():
     threading.Timer(5, thread_one).start()
     run_updates()
 
+
 def thread_two():
     time.sleep(5)
     threading.Timer(order_velocity(), thread_two).start()
     sell()
 
+
 thread_one()
 thread_two()
-
-
-
-
