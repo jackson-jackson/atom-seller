@@ -93,7 +93,7 @@ def cli_update():
     print(f" ")
     print(f"Target of {target_volume_day} atoms per day, with minimum price of {min_atom_price}, and sell interval of {order_velocity()}")
     print(f" ")
-    print(f"Current BTC balance is {round(btc_balance,2)} (${round(btc_balance * btc_price,2)}), and ATOM balance is {round(atom_balance,2)} (${round(atom_balance * atom_price * btc_price,2)})")
+    print(f"Current BTC balance is {round(btc_balance, 2)} (${round(btc_balance * btc_price, 2)}), and ATOM balance is {round(atom_balance, 2)} (${round(atom_balance * atom_price * btc_price,2)})")
     print(f" ")
     print(f"Number of orders executed: {num_orders}")
     print(f"Total atoms sold: {amount_sold}")
