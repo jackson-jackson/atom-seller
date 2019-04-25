@@ -17,12 +17,6 @@ def order_velocity():
     return velocity
 
 
-# Get updated balances
-def update_balances():
-    Bitcoin.balance()
-    Atom.balance()
-
-
 # Get average price of currency pair
 def get_average_price(currency_pair):    
     orderbook = settings.POLO.returnOrderBook(settings.CURRENCY_PAIR, depth=5)
@@ -49,30 +43,34 @@ def sell():
 def cli_update():
     system('cls') # clear for linux, cls for Windows
 
+    btc_price = Bitcoin.price()
+    btc_balance = Bitcoin.balance()
+    atom_balance = Atom.balance()
+    atom_price = Atom.price()
+
     print("Atom Seller")
     print(" ")
-    print(f"Current prices: BTC ${round(Bitcoin.price(), 2)} USD; ATOM ${round(Atom.price() * Bitcoin.price(), 2)} USD")
+    print(f"Current prices: BTC ${round(btc_price, 2)} USD; ATOM ${round(atom_price * btc_price, 2)} USD")
     print(" ")
     print(f"Target of {settings.TARGET_VOLUME_DAY} atoms per day, with minimum price of ${settings.MIN_PRICE} USD, and sell interval of {round(order_velocity())} seconds.")
     print(" ")
-    print(f"Current BTC balance is {round(Bitcoin.balance(), 2)} (${round(Bitcoin.balance() * Bitcoin.price(), 2)}), and ATOM balance is {round(Atom.balance(), 2)} (${round(Atom.balance() * Atom.price() * Bitcoin.price(), 2)})")
+    print(f"Current BTC balance is {round(btc_balance, 2)} (${round(btc_balance * btc_price, 2)}), and ATOM balance is {round(atom_balance, 2)} (${round(atom_balance * atom_price * btc_price, 2)})")
     print(" ")
     print(f"Number of orders executed: {num_orders}")
     print(f"Total atoms sold: {amount_sold}")
     
 
 def run_updates():
-    update_balances()
     cli_update()
 
 
 def thread_one():
-    threading.Timer(10, thread_one).start()
+    threading.Timer(5, thread_one).start()
     run_updates()
 
 
 def thread_two():
-    time.sleep(10)
+    time.sleep(5)
     threading.Timer(order_velocity(), thread_two).start()
     sell()
 
