@@ -38,3 +38,17 @@ class Atom:
         price = get_last_price('BTC_ATOM')
 
         return price
+
+class Ethereum:
+    @staticmethod
+    def balance():
+        balance = polo.returnBalances()
+        balance = float(balance['ETH'])
+
+        return balance
+
+    @staticmethod
+    def price():
+        price = get_last_price('USDT_ETH')
+
+        return price
