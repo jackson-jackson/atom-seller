@@ -65,7 +65,7 @@ def cli_update():
 
     print("Atom Seller")
     print(" ")
-    print(f"Current prices: BTC ${round(btc_price, 2)} USD; ATOM ${round(atom_price * btc_price, 2)} USD")
+    print(f"Current prices: :::: BTC ${round(btc_price, 2)} USD :::: ATOM ${round(atom_price * btc_price, 2)} USD ::::")
     print(" ")
     print(f"Target of {settings.TARGET_VOLUME_DAY} ATOM per day, with minimum price of ${settings.MIN_PRICE} USD, and sell interval of {round(order_velocity())} seconds.")
     print(" ")
