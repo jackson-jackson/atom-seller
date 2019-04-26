@@ -65,8 +65,6 @@ def place_order():
 
 
 def cli_update():
-    
-
     btc_price = Bitcoin.price()
     btc_balance = Bitcoin.balance()
     atom_balance = Atom.balance()
@@ -77,15 +75,15 @@ def cli_update():
     order_vel = order_velocity()
 
     if settings.OS == 'LINUX':
-        system('clear') # clear for linux, cls for Windows
+        system('clear')
     else:
         system('cls')
 
     print("Atom Seller")
     print(" ")
-    print(f"Current prices: :::: BTC ${round(btc_price, 2)} USD :::: ATOM ${round(atom_price * btc_price, 2)} USD ::::")
+    print(f"Current prices: BTC ${round(btc_price, 2)} USD :::: ATOM ${round(atom_price * btc_price, 2)} USD")
     print(" ")
-    print(f"Target of {settings.TARGET_VOLUME_DAY} ATOM per day, with minimum price of ${settings.MIN_PRICE} USD, and sell interval of {round(order_vel)} seconds.")
+    print(f"Target of {settings.TARGET_VOLUME_DAY} ATOM per day, with minimum price of ${settings.MIN_PRICE} USD, and sell interval of {round(order_vel / 60)} minutes and {round(order_vel % 60)} seconds.")
     print(" ")
     print(f"Current BTC balance is {round(btc_balance, 2)} (${round(btc_balance * btc_price, 2)}), and ATOM balance is {round(atom_balance, 2)} (${round(atom_balance * atom_price * btc_price, 2)})")
     print(" ")
