@@ -48,7 +48,6 @@ def place_order():
     global num_orders, amount_sold
 
     price = price_inside_spread(settings.CURRENCY_PAIR)
-    print(price)
 
     if Atom.price() > price and Atom.balance() > 0.5:
         settings.POLO.sell(settings.CURRENCY_PAIR, price, settings.MIN_ORDER)
