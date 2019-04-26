@@ -1,7 +1,8 @@
 import poloniex
 import private
+import settings
 
-polo = poloniex.Poloniex(private.API_KEY,private.API_SECRET)
+polo = settings.POLO
 
 def get_last_price(currency_pair):
     tickers = polo.returnTicker()

@@ -1,8 +1,9 @@
 import poloniex
 import private
+import settings
 
 
-polo = poloniex.Poloniex(private.API_KEY,private.API_SECRET)
+polo = settings.POLO
 currency_pair = 'BTC_ATOM'
 price = 0.01000000
 amount = 1
