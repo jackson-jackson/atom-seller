@@ -1,4 +1,5 @@
 import settings
+import private
 import functions
 from currencies import Bitcoin, Atom
 import math
@@ -74,7 +75,7 @@ def cli_update():
     open_orders_total = get_open_orders_total()
     order_vel = order_velocity()
 
-    if settings.OS == 'LINUX':
+    if private.OS == 'LINUX':
         system('clear')
     else:
         system('cls')
@@ -88,7 +89,7 @@ def cli_update():
     print(f"Current BTC balance is {round(btc_balance, 2)} (${round(btc_balance * btc_price, 2)}), and ATOM balance is {round(atom_balance, 2)} (${round(atom_balance * atom_price * btc_price, 2)})")
     print(" ")
     print(f"Number of orders executed: {num_orders}")
-    print(f"Total ATOM sold: {amount_sold}")
+    print(f"Total ATOM sold: {round(amount_sold, 8)}")
     print(f"Number of open orders: {len(open_orders)}")
     print(f"Total ATOM in open orders: {open_orders_total}")
     
