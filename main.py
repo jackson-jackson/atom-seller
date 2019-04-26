@@ -83,12 +83,12 @@ def run_updates():
 
 
 def thread_one():
-    threading.Timer(5, thread_one).start()
+    threading.Timer(10, thread_one).start()
     run_updates()
 
 
 def thread_two():
-    time.sleep(5)
+    time.sleep(10)
     threading.Timer(order_velocity(), thread_two).start()
     place_order()
 
