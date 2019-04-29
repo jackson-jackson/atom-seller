@@ -69,7 +69,7 @@ class Poloniex(Exchange):
     # Return ticker balance
     def get_balance(self, ticker):
         balance = self.polo.returnBalances()
-        balance = balance[self.ticker]
+        balance = balance[ticker]
 
         return float(balance)
 
@@ -88,7 +88,6 @@ class Poloniex(Exchange):
 
 
 polo = Poloniex(private.API_KEY[selected_exchange], private.API_SECRET[selected_exchange], settings.CURRENCY_PAIR, settings.TICKER)
-
 
 
 class Kraken(Exchange):

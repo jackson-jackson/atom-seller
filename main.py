@@ -33,8 +33,6 @@ def price_inside_spread():
 
     return order_price
 
-print(f"price inside spread: {exch.get_open_orders()}")
-
 
 # Work out rate for orders
 def order_velocity():
@@ -88,7 +86,7 @@ def cli_update():
     print(" ")
     print(f"Target of {settings.TARGET_VOLUME_DAY} ATOM per day, with minimum price of ${settings.MIN_PRICE} USD, and sell interval of {round(order_vel / 60)} minutes and {round(order_vel % 60)} seconds.")
     print(" ")
-    print(f"Current BTC balance is {round(btc_balance, 2)} (${round(btc_balance * btc_price, 2)}), and ATOM balance is {round(atom_balance, 2)} (${round(atom_balance * atom_price * btc_price, 2)})")
+    print(f"Current BTC balance is {round(btc_balance, 5)} (${round(btc_balance * btc_price, 2)} USD), and ATOM balance is {round(atom_balance, 5)} (${round(atom_balance * atom_price * btc_price, 2)} USD)")
     print(" ")
     print(f"Number of orders executed: {num_orders}")
     print(f"Total ATOM sold: {round(amount_sold, 8)}")
