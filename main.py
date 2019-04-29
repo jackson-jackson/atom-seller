@@ -34,22 +34,19 @@ def price_inside_spread():
     return order_price
 
 
-# Work out rate for orders
+# Work out sell interval for orders
 def order_velocity():
     day = 24 * 60 * 60
-
     price = price_inside_spread()
 
-    # Determine min order
     min_order = settings.MIN_ORDER / price
-
     num_orders = settings.TARGET_VOLUME_DAY / min_order
     velocity = day / num_orders
 
     return velocity
 
 
-# Place limit order
+# Place limit order inside spread
 def place_order():
     global num_orders, amount_sold
 
@@ -58,8 +55,10 @@ def place_order():
     # Determine min order
     min_order = settings.MIN_ORDER / price
 
-    if float(exch.get_last_price(settings.CURRENCY_PAIR)) > price and float(exch.get_balance(settings.SELLING)) > 0.5:
+    # if balance greater than .5 and if price that you're selling at is greater than the min price that I've set in USD
+    if exch.get_last_price(settings.CURRENCY_PAIR) * exch.get_usd_price() > settings.MIN_PRICE and float(exch.get_balance(settings.SELLING)) > 0.5:
         exch.sell(settings.CURRENCY_PAIR, price, min_order)
+
         num_orders += 1
         amount_sold += min_order
 
@@ -105,8 +104,8 @@ def thread_one():
 
 def thread_two():
     time.sleep(5)
-    threading.Timer(order_velocity(), thread_two).start()
     place_order()
+    threading.Timer(order_velocity(), thread_two).start()
 
 
 thread_one()

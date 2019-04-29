@@ -84,10 +84,8 @@ class Poloniex(Exchange):
 
     # Sell 
     def sell(self, currency_pair, price, min_order):
-        polo.sell(currency_pair, price, min_order)
+        self.polo.sell(currency_pair, price, min_order)
 
-
-polo = Poloniex(private.API_KEY[selected_exchange], private.API_SECRET[selected_exchange], settings.CURRENCY_PAIR, settings.TICKER)
 
 
 class Kraken(Exchange):
