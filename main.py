@@ -1,78 +1,77 @@
 import settings
+import poloniex
 import private
-import functions
-from currencies import Bitcoin, Atom
+from exchanges import Poloniex, Kraken
 import math
 import time
 import threading
 from os import system
 
+
 amount_sold = 0.0
 num_orders = 0
 open_orders_total = 0.0
+exch = None
+selected_exchange = settings.EXCHANGE
 
 
-# Work out rate for orders
+# Check which exchange to use
+if selected_exchange == 'POLO':
+    exch = Poloniex(private.API_KEY[selected_exchange], private.API_SECRET[selected_exchange], settings.CURRENCY_PAIR, settings.TICKER)
+elif selected_exchange == 'KRAKEN':
+    exch = Kraken(private.API_KEY[selected_exchange], private.API_SECRET[selected_exchange], settings.CURRENCY_PAIR, settings.TICKER)
+
+    
+# Get price inside spread
+def price_inside_spread():
+    highest_bid = exch.get_highest_bid()
+    lowest_ask = exch.get_lowest_ask()
+
+    spread = lowest_ask - highest_bid
+
+    order_price = highest_bid + (spread / 2)
+
+    return order_price
+
+
+# Work out sell interval for orders
 def order_velocity():
     day = 24 * 60 * 60
+    price = price_inside_spread()
 
-    price = price_inside_spread(settings.CURRENCY_PAIR)
-
-    # Determine min order
     min_order = settings.MIN_ORDER / price
-
     num_orders = settings.TARGET_VOLUME_DAY / min_order
     velocity = day / num_orders
 
     return velocity
 
 
-# Get price inside spread
-def price_inside_spread(currency_pair):
-        tickers = settings.POLO.returnTicker()
-        highest_bid = float(tickers[settings.CURRENCY_PAIR]['highestBid'])
-        lowest_ask = float(tickers[settings.CURRENCY_PAIR]['lowestAsk'])
-        
-        spread = lowest_ask - highest_bid
-
-        order_price = highest_bid + (spread / 2)
-
-        return round(order_price, 8)
-
-
-# Get total number of ATOM in open orders
-def get_open_orders_total():
-    orders = settings.POLO.returnOpenOrders('BTC_ATOM')
-    open_orders = []
-
-    for order in orders:
-        open_orders.append(float(order['total']))
-    return round(sum(open_orders), 8)
-
-
-# Place limit order
+# Place limit order inside spread
 def place_order():
     global num_orders, amount_sold
 
-    price = price_inside_spread(settings.CURRENCY_PAIR)
+    price = price_inside_spread()
 
     # Determine min order
     min_order = settings.MIN_ORDER / price
 
-    if Atom.price() > price and Atom.balance() > 0.5:
-        settings.POLO.sell(settings.CURRENCY_PAIR, price, min_order)
+    # if balance greater than .5 and if price that you're selling at is greater than the min price that I've set in USD
+    if exch.get_last_price(settings.CURRENCY_PAIR) * exch.get_usd_price() > settings.MIN_PRICE and float(exch.get_balance(settings.SELLING)) > 0.5:
+        exch.sell(settings.CURRENCY_PAIR, price, min_order)
+
         num_orders += 1
         amount_sold += min_order
 
 
+# Live CLI updates
 def cli_update():
-    btc_price = Bitcoin.price()
-    btc_balance = Bitcoin.balance()
-    atom_balance = Atom.balance()
-    atom_price = Atom.price()
+    btc_price = float(exch.get_usd_price()) #TODO make variable name currency agnostic
+    btc_balance = exch.get_balance(settings.TICKER) #TODO make variable name currency agnostic
+    atom_balance = float(exch.get_balance(settings.SELLING)) #TODO make variable name currency agnostic
+    atom_price = float(exch.get_last_price(settings.CURRENCY_PAIR)) #TODO make variable name currency agnostic
 
-    open_orders = functions.open_orders()
-    open_orders_total = get_open_orders_total()
+    open_orders = exch.get_open_orders()
+    open_orders_total = exch.get_open_orders_total(settings.CURRENCY_PAIR)
     order_vel = order_velocity()
 
     if private.OS == 'LINUX':
@@ -86,11 +85,11 @@ def cli_update():
     print(" ")
     print(f"Target of {settings.TARGET_VOLUME_DAY} ATOM per day, with minimum price of ${settings.MIN_PRICE} USD, and sell interval of {round(order_vel / 60)} minutes and {round(order_vel % 60)} seconds.")
     print(" ")
-    print(f"Current BTC balance is {round(btc_balance, 2)} (${round(btc_balance * btc_price, 2)}), and ATOM balance is {round(atom_balance, 2)} (${round(atom_balance * atom_price * btc_price, 2)})")
+    print(f"Current BTC balance is {round(btc_balance, 5)} (${round(btc_balance * btc_price, 2)} USD), and ATOM balance is {round(atom_balance, 5)} (${round(atom_balance * atom_price * btc_price, 2)} USD)")
     print(" ")
     print(f"Number of orders executed: {num_orders}")
     print(f"Total ATOM sold: {round(amount_sold, 8)}")
-    print(f"Number of open orders: {len(open_orders)}")
+    print(f"Number of open orders: {open_orders}")
     print(f"Total ATOM in open orders: {open_orders_total}")
     
 
@@ -105,8 +104,8 @@ def thread_one():
 
 def thread_two():
     time.sleep(5)
-    threading.Timer(order_velocity(), thread_two).start()
     place_order()
+    threading.Timer(order_velocity(), thread_two).start()
 
 
 thread_one()
