@@ -45,7 +45,7 @@ class Poloniex(Exchange):
         for order in orders:
             open_orders.append(float(order['total']))
 
-        return sum(open_orders)
+        return len(open_orders)
 
 
     # Get sum total of all open orders for a given currency
