@@ -6,7 +6,13 @@ import math
 import time
 import threading
 from os import system
+import logging
+import json
 
+# Setup logging
+logging.basicConfig(level=logging.DEBUG,filename='atom-seller.log', filemode='a', format='%(name)s - %(levelname)s - %(message)s')
+
+logging.info("Starting atom-seller")
 
 amount_sold = 0.0
 num_orders = 0
@@ -14,6 +20,14 @@ open_orders_total = 0.0
 exch = None
 selected_exchange = settings.EXCHANGE
 
+# Read in static data if available
+try:
+    with open('atom-seller-data.json') as infile:
+        data = json.load(infile)
+        amount_sold = data['amount_sold']
+        num_orders = data['num_orders']
+except FileNotFoundError:
+    logging.info("No json file")
 
 # Check which exchange to use
 if selected_exchange == 'POLO':
@@ -63,6 +77,14 @@ def place_order():
         amount_sold += min_order
 
 
+def save_data():
+    data = {}
+    data['amount_sold'] = amount_sold
+    data['num_orders'] = num_orders
+
+    with open('atom-seller-data.json', 'w') as outfile:
+        json.dump(data, outfile)
+
 # Live CLI updates
 def cli_update():
     btc_price = float(exch.get_usd_price()) #TODO make variable name currency agnostic
@@ -95,6 +117,7 @@ def cli_update():
 
 def run_updates():
     cli_update()
+    save_data()
 
 
 def thread_one():
