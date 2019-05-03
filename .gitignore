@@ -114,3 +114,4 @@ dmypy.json
 .pyre/
 private.py
 test.py
+atom-seller-data.json
