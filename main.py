@@ -58,7 +58,7 @@ def order_velocity():
     price = price_inside_spread()
 
     min_order = settings.MIN_ORDER / price
-    num_orders = settings.TARGET_VOLUME_DAY / min_order
+    num_orders = private.TARGET_VOLUME_DAY / min_order
     velocity = day / num_orders
 
     return velocity
@@ -110,14 +110,14 @@ def cli_update():
     print(" ")
     print(f"Current prices: BTC ${round(btc_price, 2)} USD :::: ATOM ${round(atom_price * btc_price, 2)} USD")
     print(" ")
-    print(f"Target of {settings.TARGET_VOLUME_DAY} ATOM per day, with minimum price of ${settings.MIN_PRICE} USD, and sell interval of {round(order_vel / 60)} minutes and {round(order_vel % 60)} seconds.")
+    print(f"Target of {private.TARGET_VOLUME_DAY} ATOM per day, with minimum price of ${settings.MIN_PRICE} USD, and sell interval of {round(order_vel / 60)} minutes and {round(order_vel % 60)} seconds.")
     print(" ")
     print(f"Current BTC balance is {round(btc_balance, 5)} (${round(btc_balance * btc_price, 2)} USD), and ATOM balance is {round(atom_balance, 5)} (${round(atom_balance * atom_price * btc_price, 2)} USD)")
     print(" ")
     print(f"Number of orders executed: {num_orders}")
     print(f"Total ATOM sold: {round(amount_sold, 8)}")
     print(f"Number of open orders: {open_orders}")
-    print(f"Total ATOM in open orders: {open_orders_total}")
+    print(f"Total BTC in open orders: {open_orders_total}") #TODO calculate atom here
     
 
 def run_updates():
