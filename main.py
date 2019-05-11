@@ -15,7 +15,6 @@ logging.basicConfig(level=logging.DEBUG,filename='atom-seller.log', filemode='a'
 
 logging.info("Starting atom-seller")
 
-
 amount_sold = 0.0
 num_orders = 0
 open_orders_total = 0.0
@@ -48,7 +47,6 @@ def price_inside_spread():
     spread = lowest_ask - highest_bid
 
     order_price = highest_bid + (spread / 2)
-
     return order_price
 
 
@@ -60,7 +58,6 @@ def order_velocity():
     min_order = settings.MIN_ORDER / price
     num_orders = private.TARGET_VOLUME_DAY / min_order
     velocity = day / num_orders
-
     return velocity
 
 
