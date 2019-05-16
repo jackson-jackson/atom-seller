@@ -8,6 +8,7 @@ import threading
 from os import system
 import logging
 import json
+import datetime
 
 
 # Setup logging
@@ -17,6 +18,7 @@ logging.info("Starting atom-seller")
 
 amount_sold = 0.0
 num_orders = 0
+last_order = ""
 open_orders_total = 0.0
 exch = None
 selected_exchange = settings.EXCHANGE
@@ -63,7 +65,7 @@ def order_velocity():
 
 # Place limit order inside spread
 def place_order():
-    global num_orders, amount_sold
+    global num_orders, amount_sold, last_order
 
     price = price_inside_spread()
 
@@ -76,6 +78,7 @@ def place_order():
 
         num_orders += 1
         amount_sold += min_order
+        last_order = f"{round(min_order,2)} at {datetime.datetime.now()}"
 
 
 def save_data():
@@ -115,6 +118,8 @@ def cli_update():
     print(f"Total ATOM sold: {round(amount_sold, 8)}")
     print(f"Number of open orders: {open_orders}")
     print(f"Total BTC in open orders: {open_orders_total}") #TODO calculate atom here
+    print(" ")
+    print(f"Last order executed: {last_order}")
     
 
 def run_updates():
