@@ -10,6 +10,9 @@ import logging
 import json
 import datetime
 
+if private.USE_FLASK == 1:
+    from flask import Flask
+
 
 # Setup logging
 logging.basicConfig(level=logging.DEBUG,filename='atom-seller.log', filemode='a', format='%(name)s - %(levelname)s - %(message)s')
@@ -120,10 +123,46 @@ def cli_update():
     print(f"Total BTC in open orders: {open_orders_total}") #TODO calculate atom here
     print(" ")
     print(f"Last order executed: {last_order}")
+
+
+def html_update():
+    btc_price = float(exch.get_usd_price()) #TODO make variable name currency agnostic
+    btc_balance = exch.get_balance(settings.TICKER) #TODO make variable name currency agnostic
+    atom_balance = float(exch.get_balance(settings.SELLING)) #TODO make variable name currency agnostic
+    atom_price = float(exch.get_last_price(settings.CURRENCY_PAIR)) #TODO make variable name currency agnostic
+
+    open_orders = exch.get_open_orders()
+    open_orders_total = exch.get_open_orders_total(settings.CURRENCY_PAIR)
+    order_vel = order_velocity()
+
+    html = """
+        <html>
+        <head><title>Atom Seller</title></head>
+        <body>
+        <p>Atom Seller</p>
+        <br />
+        <p>Current prices: BTC {0} USD :::: ATOM {1} USD</p>
+        <p>Target of {2} ATOM per day, with minimum price of ${3} USD, and sell interval of {4} minutes and {5} seconds.</p>
+        <br /></br />
+        <p>Current BTC balance is {6} (${7} USD), and ATOM balance is {8} (${9} USD)</p>
+        <br /></br />
+        <p>Number of orders executed: {10}</p>
+        <p>Total ATOM sold: {11}</p>
+        <p>Number of open orders: {12}</p>
+        <p>Total BTC in open orders: {13}</p>
+        <br />
+        <p>Last order executed: {14}</p>
+        </body>
+        </html>
+        """
+
+    return html.format(round(btc_price, 2), round(atom_price * btc_price, 2), private.TARGET_VOLUME_DAY, settings.MIN_PRICE, round(order_vel / 60), round(order_vel % 60), round(btc_balance, 5), round(btc_balance * btc_price, 2), round(atom_balance, 5), round(atom_balance * atom_price * btc_price, 2), num_orders, round(amount_sold, 8), open_orders, open_orders_total, last_order)
+    
     
 
 def run_updates():
-    cli_update()
+    if private.USE_FLASK != 1:
+        cli_update()
     save_data()
 
 
@@ -136,6 +175,14 @@ def thread_two():
     time.sleep(5)
     place_order()
     threading.Timer(order_velocity(), thread_two).start()
+
+
+if private.USE_FLASK == 1:
+    app = Flask(__name__)
+    @app.route("/")
+    def index():
+        return html_update()
+        
 
 
 thread_one()

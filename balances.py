@@ -1,8 +1,8 @@
 import requests
 
 
-ico_account = 'cosmos1f0kwe42k9xdmlxt939m6nq7h9shj0rygnldusg'
-secure_ledger = 'cosmos1rpw2pc2psn87jp9eum5esnpfqmymd9nn7ljd2c'
+ico_account = 'cosmos1j4mk6l3emyncu84f5fcxgn9n3vdjn23jcnlkdt'
+secure_ledger = 'cosmos1ad5xh3pz68fk8k86r9vz3veqh9aazhmgcktdzh'
 mcv_account = 'cosmos1k447djp2qrfk8pl44vd02qdlld2asjeeyxj94j'
 
 addresses_list = [ico_account, secure_ledger, mcv_account]
