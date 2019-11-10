@@ -9,6 +9,7 @@ verify_ssl = true
 poloniex = "*"
 krakenex = "*"
 requests = "*"
+flask = "*"
 
 [requires]
 python_version = "3.7"

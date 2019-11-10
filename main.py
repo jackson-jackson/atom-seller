@@ -10,11 +10,11 @@ import logging
 import json
 import datetime
 
-if private.USE_FLASK == 1:
+if settings.USE_FLASK == 1:
     from flask import Flask
 
 
-# Setup logging
+# Setup logging.
 logging.basicConfig(level=logging.DEBUG,filename='atom-seller.log', filemode='a', format='%(name)s - %(levelname)s - %(message)s')
 
 logging.info("Starting atom-seller")
@@ -27,7 +27,7 @@ exch = None
 selected_exchange = settings.EXCHANGE
 
 
-# Read in static data if available
+# Read in static data if available.
 try:
     with open('atom-seller-data.json') as infile:
         data = json.load(infile)
@@ -37,14 +37,14 @@ except FileNotFoundError:
     logging.info("No json file")
 
 
-# Check which exchange to use
+# Check which exchange to use.
 if selected_exchange == 'POLO':
-    exch = Poloniex(private.API_KEY[selected_exchange], private.API_SECRET[selected_exchange], settings.CURRENCY_PAIR, settings.TICKER)
+    exch = Poloniex(private.API_KEY, private.API_SECRET, settings.CURRENCY_PAIR, settings.TICKER)
 elif selected_exchange == 'KRAKEN':
-    exch = Kraken(private.API_KEY[selected_exchange], private.API_SECRET[selected_exchange], settings.CURRENCY_PAIR, settings.TICKER)
+    exch = Kraken(private.API_KEY, private.API_SECRET, settings.CURRENCY_PAIR, settings.TICKER)
 
     
-# Get price inside spread
+# Get price inside spread.
 def price_inside_spread():
     highest_bid = exch.get_highest_bid()
     lowest_ask = exch.get_lowest_ask()
@@ -55,7 +55,7 @@ def price_inside_spread():
     return order_price
 
 
-# Work out sell interval for orders
+# Work out sell interval for orders.
 def order_velocity():
     day = 24 * 60 * 60
     price = price_inside_spread()
@@ -66,16 +66,16 @@ def order_velocity():
     return velocity
 
 
-# Place limit order inside spread
+# Place limit order inside spread.
 def place_order():
     global num_orders, amount_sold, last_order
 
     price = price_inside_spread()
 
-    # Determine min order
+    # Determine minimum order size.
     min_order = settings.MIN_ORDER / price
 
-    # if balance greater than .5 and if price that you're selling at is greater than the min price that I've set in USD
+    # If balance greater than .5 and if price that you're selling at is greater than the min price that I've set in USD.
     if exch.get_last_price(settings.CURRENCY_PAIR) * exch.get_usd_price() > settings.MIN_PRICE and float(exch.get_balance(settings.SELLING)) > 0.5:
         exch.sell(settings.CURRENCY_PAIR, price, min_order)
 
@@ -93,7 +93,7 @@ def save_data():
         json.dump(data, outfile)
 
 
-# Live CLI updates
+# Live CLI updates.
 def cli_update():
     btc_price = float(exch.get_usd_price()) #TODO make variable name currency agnostic
     btc_balance = exch.get_balance(settings.TICKER) #TODO make variable name currency agnostic
@@ -126,10 +126,10 @@ def cli_update():
 
 
 def html_update():
-    btc_price = float(exch.get_usd_price()) #TODO make variable name currency agnostic
-    btc_balance = exch.get_balance(settings.TICKER) #TODO make variable name currency agnostic
-    atom_balance = float(exch.get_balance(settings.SELLING)) #TODO make variable name currency agnostic
-    atom_price = float(exch.get_last_price(settings.CURRENCY_PAIR)) #TODO make variable name currency agnostic
+    btc_price = float(exch.get_usd_price()) #TODO make variable name currency agnostic.
+    btc_balance = exch.get_balance(settings.TICKER) #TODO make variable name currency agnostic.
+    atom_balance = float(exch.get_balance(settings.SELLING)) #TODO make variable name currency agnostic.
+    atom_price = float(exch.get_last_price(settings.CURRENCY_PAIR)) #TODO make variable name currency agnostic.
 
     open_orders = exch.get_open_orders()
     open_orders_total = exch.get_open_orders_total(settings.CURRENCY_PAIR)
@@ -159,9 +159,8 @@ def html_update():
     return html.format(round(btc_price, 2), round(atom_price * btc_price, 2), private.TARGET_VOLUME_DAY, settings.MIN_PRICE, round(order_vel / 60), round(order_vel % 60), round(btc_balance, 5), round(btc_balance * btc_price, 2), round(atom_balance, 5), round(atom_balance * atom_price * btc_price, 2), num_orders, round(amount_sold, 8), open_orders, open_orders_total, last_order)
     
     
-
 def run_updates():
-    if private.USE_FLASK != 1:
+    if settings.USE_FLASK != 1:
         cli_update()
     save_data()
 
@@ -177,12 +176,11 @@ def thread_two():
     threading.Timer(order_velocity(), thread_two).start()
 
 
-if private.USE_FLASK == 1:
+if settings.USE_FLASK == 1:
     app = Flask(__name__)
     @app.route("/")
     def index():
         return html_update()
-        
 
 
 thread_one()

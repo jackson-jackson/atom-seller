@@ -1,14 +1,10 @@
 import requests
+import private
+
+addresses_list = private.ADDRESSES_LIST
 
 
-ico_account = 'cosmos1j4mk6l3emyncu84f5fcxgn9n3vdjn23jcnlkdt'
-secure_ledger = 'cosmos1ad5xh3pz68fk8k86r9vz3veqh9aazhmgcktdzh'
-mcv_account = 'cosmos1k447djp2qrfk8pl44vd02qdlld2asjeeyxj94j'
-
-addresses_list = [ico_account, secure_ledger, mcv_account]
-
-
-#get rewards for each account
+# Get rewards for each account.
 def get_total_rewards(addresses_list):
     total = []
     for address in addresses_list:
@@ -19,7 +15,7 @@ def get_total_rewards(addresses_list):
     return sum(total)
 
 
-#get total staked for each account
+# Get total staked for each account.
 def get_total_staked(addresses_list):
     total = []
     for address in addresses_list:
@@ -30,7 +26,7 @@ def get_total_staked(addresses_list):
     return sum(total)
 
 
-#get total available balance for each account
+# Get total available balance for each account.
 def get_available_balances(addresses_list):
     total = []
     for address in addresses_list:
